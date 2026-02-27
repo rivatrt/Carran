@@ -1,0 +1,79 @@
+================================================================================
+                    MANUS AI CLONE - USER GUIDE (SPOON-FEED VERSION)
+================================================================================
+
+Welcome! This guide will help you set up and use your own Manus AI agent on
+Android using Termux. No complex coding required!
+
+--------------------------------------------------------------------------------
+STEP 1: INSTALL TERMUX
+--------------------------------------------------------------------------------
+1. Download and install "Termux" from F-Droid (do NOT use the Play Store version).
+2. Open Termux on your phone.
+
+--------------------------------------------------------------------------------
+STEP 2: RUN THE INSTALLATION
+--------------------------------------------------------------------------------
+1. Copy and paste the following command into Termux and press Enter:
+
+   chmod +x install.sh && ./install.sh
+
+2. Wait for it to finish. It will install Python, Node.js, and everything else
+   automatically. This might take 5-10 minutes depending on your internet speed.
+
+--------------------------------------------------------------------------------
+STEP 3: START THE AGENT
+--------------------------------------------------------------------------------
+1. Once installation is done, type this command and press Enter:
+
+   ./start.sh
+
+2. You will see some text in the terminal. LOOK FOR THIS LINE:
+   "Your API Key is: [A-LONG-RANDOM-CODE]"
+
+3. COPY that code! You will need it to login to the Web UI.
+
+--------------------------------------------------------------------------------
+STEP 4: OPEN THE WEB INTERFACE (UI)
+--------------------------------------------------------------------------------
+1. Open Chrome or any browser on your phone.
+2. In the address bar, type:
+
+   http://localhost:8000
+
+3. You will see the "Manus AI Login" page.
+4. Paste the API Key you copied in Step 3 and click "Login".
+
+--------------------------------------------------------------------------------
+STEP 5: CONFIGURE TELEGRAM (OPTIONAL BUT RECOMMENDED)
+--------------------------------------------------------------------------------
+1. Go to Telegram and search for "@BotFather".
+2. Type "/newbot" and follow instructions to get a "Bot Token".
+3. Also, find your own "User ID" (use a bot like "@userinfobot" to get it).
+4. Go back to your Manus Web UI (the website you opened in Step 4).
+5. Click on "Settings" at the top right.
+6. Paste your "Telegram Bot Token" into the box.
+7. Click "Add" next to "Allowed Telegram User IDs" and type your User ID.
+8. Click "Save Configuration".
+9. RESTART Termux (Stop with Ctrl+C and run ./start.sh again) to activate the bot.
+
+--------------------------------------------------------------------------------
+STEP 6: USING THE AGENT
+--------------------------------------------------------------------------------
+- WEB UI: Just go to the "Chat" tab and type your request.
+  Example: "List all files in my current directory"
+  Manus will THINK, then ACT (run the command), and tell you the result.
+
+- TELEGRAM: Send a message to your bot.
+  Example: "Create a new folder named 'MyProject'"
+  Manus will do it and reply back to you on Telegram!
+
+--------------------------------------------------------------------------------
+SAFETY TIPS:
+--------------------------------------------------------------------------------
+- Never share your API Key with anyone! It gives access to your phone's shell.
+- Only add your own User ID to the Telegram whitelist.
+- If Manus gets stuck, press Ctrl+C in Termux to stop it and restart.
+
+Enjoy your autonomous AI assistant!
+================================================================================
