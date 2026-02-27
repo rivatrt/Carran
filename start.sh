@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting Manus AI Clone..."
+echo "Starting Carren AI Clone..."
 
 if [ -d "venv" ]; then
     source venv/bin/activate

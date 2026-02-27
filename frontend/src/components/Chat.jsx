@@ -148,9 +148,9 @@ const Chat = () => {
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center px-10">
             <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-[3rem] flex items-center justify-center mb-10 shadow-2xl shadow-blue-500/20">
-              <span className="text-white text-5xl font-bold">M</span>
+              <span className="text-white text-5xl font-bold">C</span>
             </div>
-            <h2 className="text-3xl font-bold mb-4 tracking-tight">I am Manus.</h2>
+            <h2 className="text-3xl font-bold mb-4 tracking-tight">I am Carren.</h2>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
               Tell me your goal. I can browse, code, and execute tasks on your device autonomously.
             </p>
@@ -178,15 +178,11 @@ const Chat = () => {
         ))}
 
         {status && (
-          <div className="flex justify-start">
-            <div className="bg-[#1a1a1a] border border-[#222] rounded-[2rem] rounded-tl-md px-6 py-4 flex items-center space-x-4 shadow-xl">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
-              </div>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{currentStep}</span>
+          <div className="flex justify-start items-center space-x-2 px-2">
+            <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
             </div>
+            <span className="text-sm text-gray-400">Using browser</span>
           </div>
         )}
 
@@ -210,24 +206,29 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="px-6 pb-12 pt-4 bg-gradient-to-t from-[#000] via-[#000]/90 to-transparent sticky bottom-0">
-        <div className="max-w-screen-sm mx-auto">
-          <div className="relative flex items-end bg-[#1a1a1a] border border-[#222] rounded-[3rem] p-2 transition-all focus-within:border-blue-500/50 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+      <div className="px-4 pb-8 pt-2 bg-black sticky bottom-0">
+        <div className="max-w-screen-md mx-auto">
+          <div className="relative flex items-center bg-[#1c1c1c] rounded-[2.5rem] px-2 py-2 transition-all shadow-2xl">
             <button
               onClick={() => fileInputRef.current.click()}
               disabled={status || isUploading}
-              className="p-4 text-gray-500 hover:text-white transition-colors disabled:opacity-30"
+              className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white disabled:opacity-30"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+              <div className="w-10 h-10 rounded-full bg-[#2a2a2a] flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+            </button>
+            <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
+
+            <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                <path d="M12 5v14M5 12h14" className="opacity-20" />
+                <path d="M4.5 16.5c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0" strokeWidth="1.5" />
               </svg>
             </button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleFileUpload}
-            />
 
             <textarea
               rows="1"
@@ -239,25 +240,34 @@ const Chat = () => {
                   handleSend();
                 }
               }}
-              className="flex-1 bg-transparent text-white px-3 py-4 focus:outline-none placeholder:text-gray-700 resize-none max-h-32 text-[16px] font-medium"
-              placeholder={isUploading ? "Uploading..." : "Message Manus..."}
+              className="flex-1 bg-transparent text-white px-3 py-3 focus:outline-none placeholder:text-gray-600 resize-none max-h-32 text-lg"
+              placeholder={isUploading ? "Uploading..." : "Message Carren"}
               disabled={status || isUploading}
             />
 
-            <button
-              onClick={handleSend}
-              aria-label="Send mission"
-              disabled={status || !input.trim() || isUploading}
-              className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-200 disabled:bg-[#222] disabled:text-gray-800 transition-all shadow-xl transform active:scale-90 flex-shrink-0"
-            >
-              {status ? (
-                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            <div className="flex items-center space-x-1 pr-1">
+              <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                 </svg>
-              )}
-            </button>
+              </button>
+
+              <button
+                onClick={handleSend}
+                disabled={status || !input.trim() || isUploading}
+                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${status ? 'bg-transparent' : 'bg-white text-black hover:bg-gray-200'}`}
+              >
+                {status ? (
+                  <div className="w-10 h-10 bg-[#2a2a2a] rounded-lg flex items-center justify-center">
+                    <div className="w-4 h-4 bg-white rounded-sm"></div>
+                  </div>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="mt-4 flex justify-center items-center space-x-6">

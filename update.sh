@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Updating Manus AI Clone..."
+echo "Updating Carren AI Clone..."
 
 # Pull latest changes
 if [ -d ".git" ]; then

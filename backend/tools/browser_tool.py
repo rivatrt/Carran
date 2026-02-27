@@ -35,7 +35,7 @@ if __name__ == "__main__":
     import sys
     import argparse
 
-    parser = argparse.ArgumentParser(description="Manus Browser Tool")
+    parser = argparse.ArgumentParser(description="Carren Browser Tool")
     parser.add_argument("action", choices=["goto", "click", "type", "screenshot"], help="Action to perform")
     parser.add_argument("url", help="Target URL")
     parser.add_argument("--selector", help="CSS selector for click/type")

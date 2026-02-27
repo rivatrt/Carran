@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getConfig, updateConfig, getStatus } from '../api';
 
-const Config = () => {
+const Config = ({ onLogout }) => {
   const [config, setConfig] = useState({
     telegram_token: '',
     ai_provider: 'PollinationsAI',
@@ -50,7 +50,7 @@ const Config = () => {
       <div className="max-w-3xl mx-auto space-y-8 pb-10">
         <header className="mb-10">
           <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
-          <p className="text-gray-500 mt-2">Customize your Manus AI experience</p>
+          <p className="text-gray-500 mt-2">Customize your Carren AI experience</p>
         </header>
 
         <section className="bg-[#121212] rounded-[2.5rem] p-8 border border-[#222222] shadow-xl">
@@ -159,8 +159,19 @@ const Config = () => {
           )}
         </section>
 
+        <section className="bg-red-900/5 rounded-[2.5rem] p-8 border border-red-900/20 shadow-xl mt-8">
+          <h3 className="text-lg font-bold text-red-500 mb-4">Danger Zone</h3>
+          <p className="text-sm text-gray-500 mb-6">Disconnecting will remove your local access key. You will need to retrieve it from Termux to log back in.</p>
+          <button
+            onClick={onLogout}
+            className="w-full bg-red-600/10 text-red-500 font-bold py-4 rounded-3xl border border-red-500/20 hover:bg-red-600 hover:text-white transition-all active:scale-[0.98]"
+          >
+            Log Out & De-authorize
+          </button>
+        </section>
+
         <p className="text-center text-gray-700 text-xs py-10 uppercase tracking-[0.3em]">
-          Version 2.0 • Build 2024.1
+          Version 1.6 Lite • Build 2026.1
         </p>
       </div>
     </div>
