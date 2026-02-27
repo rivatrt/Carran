@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e # Stop on error
+
 echo "Installing Manus AI Clone for Termux..."
 
 # Update packages
@@ -8,7 +10,16 @@ pkg update -y && pkg upgrade -y
 # Install dependencies
 pkg install -y python nodejs-lts git
 
+# Create virtual environment
+echo "Setting up virtual environment..."
+python3 -m venv venv
+source venv/bin/activate
+
+# Upgrade pip
+pip install --upgrade pip
+
 # Install python packages
+echo "Installing Python dependencies..."
 pip install -r requirements.txt
 
 # Setup Frontend

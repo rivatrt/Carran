@@ -2,7 +2,8 @@ fastapi
 uvicorn
 g4f
 python-telegram-bot
-pydantic-settings
+pydantic<2.0.0
 pytest
 python-multipart
 python-dotenv
+pytest-mock

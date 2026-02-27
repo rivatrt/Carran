@@ -1,26 +1,41 @@
 import os
 import json
 import secrets
+import threading
+from contextlib import asynccontextmanager
+from typing import List, Dict, Optional
+
 from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
-from typing import List, Dict, Optional
-import threading
-from contextlib import asynccontextmanager
 
 from backend.ai_engine import AIEngine
 from backend.executor import CommandExecutor
 from backend.telegram_bot import TelegramBot
+
+# Pydantic v1 models for Termux compatibility (avoiding pydantic-core)
+class ConfigModel(BaseModel):
+    telegram_token: str = ""
+    ai_provider: str = "PollinationsAI"
+    allowed_user_ids: List[int] = []
+    proxy: str = ""
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
 
 CONFIG_FILE = "data/config.json"
 API_KEY_FILE = "data/api_key.txt"
 
 def load_config():
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                return json.load(f)
+        except Exception:
+            pass
     return {
         "telegram_token": "",
         "ai_provider": "PollinationsAI",
@@ -29,10 +44,12 @@ def load_config():
     }
 
 def save_config(config: dict):
+    os.makedirs("data", exist_ok=True)
     with open(CONFIG_FILE, "w") as f:
         json.dump(config, f)
 
 def get_or_create_api_key():
+    os.makedirs("data", exist_ok=True)
     if os.path.exists(API_KEY_FILE):
         with open(API_KEY_FILE, "r") as f:
             return f.read().strip()
@@ -89,22 +106,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class Config(BaseModel):
-    telegram_token: Optional[str] = ""
-    ai_provider: Optional[str] = "PollinationsAI"
-    allowed_user_ids: List[int] = []
-    proxy: Optional[str] = ""
-
-class ChatMessage(BaseModel):
-    role: str
-    content: str
-
 @app.get("/api/config", dependencies=[Depends(verify_api_key)])
 async def get_config():
     return load_config()
 
 @app.post("/api/config", dependencies=[Depends(verify_api_key)])
-async def update_config(config: Config):
+async def update_config(config: ConfigModel):
     save_config(config.dict())
     ai_engine.set_provider(config.ai_provider)
     return {"message": "Config updated. Restart required for bot changes."}

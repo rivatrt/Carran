@@ -58,7 +58,16 @@ STEP 5: CONFIGURE TELEGRAM (OPTIONAL BUT RECOMMENDED)
 9. RESTART Termux (Stop with Ctrl+C and run ./start.sh again) to activate the bot.
 
 --------------------------------------------------------------------------------
-STEP 6: USING THE AGENT
+STEP 6: UPDATING THE PROJECT
+--------------------------------------------------------------------------------
+If you want to update to the latest version of the project, run:
+
+   ./update.sh
+
+This will pull latest changes and update dependencies automatically.
+
+--------------------------------------------------------------------------------
+STEP 7: USING THE AGENT
 --------------------------------------------------------------------------------
 - WEB UI: Just go to the "Chat" tab and type your request.
   Example: "List all files in my current directory"
