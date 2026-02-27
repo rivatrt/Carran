@@ -14,7 +14,17 @@ class BrowserEngine:
     async def _init_browser(self):
         if self.browser is None:
             self.pw = await async_playwright().start()
-            self.browser = await self.pw.chromium.launch(headless=True)
+
+            # Attempt to find system chromium (common in Termux)
+            import shutil
+            executable_path = shutil.which("chromium") or shutil.which("chromium-browser")
+
+            launch_kwargs = {"headless": True}
+            if executable_path:
+                logging.info(f"BrowserEngine: Using system chromium at {executable_path}")
+                launch_kwargs["executable_path"] = executable_path
+
+            self.browser = await self.pw.chromium.launch(**launch_kwargs)
 
             # Load cookies if they exist
             try:

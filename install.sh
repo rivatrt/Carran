@@ -8,7 +8,7 @@ echo "Installing Manus AI Clone for Termux..."
 pkg update -y && pkg upgrade -y
 
 # Install dependencies
-pkg install -y python nodejs-lts git
+pkg install -y python nodejs-lts git chromium
 
 # Create virtual environment
 echo "Setting up virtual environment..."
