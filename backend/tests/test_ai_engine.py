@@ -4,7 +4,7 @@ import g4f
 
 def test_ai_engine_initialization():
     engine = AIEngine()
-    assert engine.provider == g4f.Provider.PollinationsAI
+    assert engine.provider == g4f.Provider.Gemini
     assert "Manus AI" in engine.system_prompt
 
 def test_ai_engine_generate_response_mock(mocker):

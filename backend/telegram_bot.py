@@ -24,7 +24,22 @@ class TelegramBot:
             logging.warning(f"Unauthorized access attempt from user ID: {update.effective_user.id}")
             return
 
-        user_text = update.message.text
+        user_text = update.message.text or update.message.caption or ""
+
+        # Handle files
+        if update.message.document or update.message.photo:
+            await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=constants.ChatAction.UPLOAD_DOCUMENT)
+            file = await (update.message.document or update.message.photo[-1]).get_file()
+            import os
+            os.makedirs("data/uploads", exist_ok=True)
+            file_name = update.message.document.file_name if update.message.document else f"photo_{file.file_id}.jpg"
+            file_path = f"data/uploads/{file_name}"
+            await file.download_to_drive(file_path)
+            user_text += f"\n[File Received: {file_name} at {file_path}. I can now process this file.]"
+
+        if not user_text:
+            return
+
         messages = [{"role": "user", "content": user_text}]
 
         status_msg = await update.message.reply_text("🔍 Thinking...")
@@ -71,7 +86,8 @@ class TelegramBot:
 
         self.application = ApplicationBuilder().token(self.token).build()
 
-        message_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), self.handle_message)
+        # Combined handler for text and files
+        message_handler = MessageHandler((filters.TEXT | filters.PHOTO | filters.Document.ALL) & (~filters.COMMAND), self.handle_message)
         self.application.add_handler(message_handler)
 
         logging.info("Starting Telegram bot...")

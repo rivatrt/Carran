@@ -26,6 +26,33 @@ export const sendMessage = async (messages) => {
   return response.json();
 };
 
+export const uploadFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const headers = getHeaders();
+  delete headers["Content-Type"]; // Let browser set it with boundary
+
+  const response = await fetch(`${API_BASE}/upload`, {
+    method: "POST",
+    headers: {
+      "X-API-Key": localStorage.getItem("api_key") || "",
+    },
+    body: formData,
+  });
+  if (response.status === 401) throw new Error("Unauthorized");
+  return response.json();
+};
+
+export const clearHistory = async () => {
+  const response = await fetch(`${API_BASE}/clear-history`, {
+    method: "POST",
+    headers: getHeaders(),
+  });
+  if (response.status === 401) throw new Error("Unauthorized");
+  return response.json();
+};
+
 export const getConfig = async () => {
   const response = await fetch(`${API_BASE}/config`, {
     headers: getHeaders(),

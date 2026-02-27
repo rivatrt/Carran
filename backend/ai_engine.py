@@ -3,76 +3,94 @@ from typing import List, Dict, Optional, Any
 import logging
 
 class AIEngine:
-    def __init__(self, provider_name: str = "PollinationsAI"):
+    def __init__(self, provider_name: str = "Gemini"):
         self.set_provider(provider_name)
         self.system_prompt = (
-            "You are Manus AI, an advanced autonomous AI agent. "
-            "You can think, analyze, and execute shell commands to accomplish tasks. "
-            "Your goal is to be helpful, efficient, and precise.\n\n"
-            "When you need to perform an action, follow this structure:\n"
-            "Thought: [Explain your reasoning and what you plan to do]\n"
-            "Action: [The exact shell command to run]\n\n"
-            "After you get the output of the command, continue your thought process. "
-            "If you have completed the task, provide a final summary without an Action."
+            "You are Manus AI, the world's most capable autonomous AI agent. "
+            "You don't just talk, you DEPLOY and SOLVE. You have full access to a shell environment "
+            "and you should use it to browse the web, write code, run scripts, and manage files.\n\n"
+            "GUIDELINES:\n"
+            "1. ALWAYS think before you act. Explain your reasoning clearly.\n"
+            "2. If you need information you don't have, use 'curl' or 'wget' to fetch it or search for it.\n"
+            "3. If a task requires multiple steps, break it down and execute them one by one.\n"
+            "4. For complex coding, write the code to a file first, then run it.\n\n"
+            "RESPONSE FORMAT:\n"
+            "Your response must ALWAYS follow this structure if you want to take an action:\n"
+            "Thought: [Your detailed reasoning]\n"
+            "Action: [The shell command to execute]\n\n"
+            "If you have finished the task or just want to reply:\n"
+            "Thought: [Reasoning]\n"
+            "Final Answer: [Your final response to the user]\n\n"
+            "Current environment: Linux (Termux on Android). Be mindful of mobile constraints."
         )
 
     def set_provider(self, name: str):
         self.provider_name = name
-        try:
-            if name == "Gemini":
-                self.provider = g4f.Provider.Gemini
-            elif name == "ChatGPT":
-                self.provider = g4f.Provider.OpenaiChat
-            elif name == "Blackbox":
-                self.provider = g4f.Provider.BlackboxPro
-            else:
-                self.provider = g4f.Provider.PollinationsAI
-        except Exception:
-            self.provider = g4f.Provider.PollinationsAI
+        # Map user-friendly names to g4f providers
+        mapping = {
+            "Gemini": g4f.Provider.Gemini,
+            "ChatGPT": g4f.Provider.OpenaiChat,
+            "Blackbox": g4f.Provider.BlackboxPro,
+            "Claude": g4f.Provider.Claude,
+            "Grok": g4f.Provider.Grok
+        }
+        self.provider = mapping.get(name, g4f.Provider.Gemini)
 
     def generate_response(self, messages: List[Dict[str, str]], proxy: Optional[str] = None) -> str:
-        # Prepare messages
         full_messages = [{"role": "system", "content": self.system_prompt}]
 
-        # Filter and add messages to avoid too large history
-        # We keep the last 10 messages for context
-        history = messages[-10:]
+        # In g4f, some providers handle images differently.
+        # For now, we'll pass messages as is, ensuring we don't exceed context.
+        history = messages[-15:]
         full_messages.extend(history)
 
-        # List of providers to try as fallback if the selected one fails
-        providers_to_try = [self.provider]
-
-        # Common reliable free providers
-        # Using providers that are commonly available in g4f
-        fallbacks = [
-            g4f.Provider.PollinationsAI,
+        # Priority list of providers for high-quality "web-version" experience
+        providers_to_try = [
+            self.provider,
+            g4f.Provider.Gemini,
+            g4f.Provider.OpenaiChat,
             g4f.Provider.BlackboxPro,
-            g4f.Provider.OpenaiChat
+            g4f.Provider.PollinationsAI
         ]
 
-        for f in fallbacks:
-            if f != self.provider:
-                providers_to_try.append(f)
+        # Unique providers only
+        seen = set()
+        unique_providers = []
+        for p in providers_to_try:
+            if p not in seen:
+                unique_providers.append(p)
+                seen.add(p)
 
-        for provider in providers_to_try:
+        for provider in unique_providers:
             try:
-                logging.info(f"Trying provider: {provider.__name__ if hasattr(provider, '__name__') else provider}")
+                logging.info(f"Manus Engine: Attempting {provider.__name__}")
+                # Use high-tier models if the provider supports it
+                model = g4f.models.default
+                if provider == g4f.Provider.Gemini:
+                    model = "gemini-1.5-pro"
+                elif provider == g4f.Provider.OpenaiChat:
+                    model = "gpt-4o"
+
                 response = g4f.ChatCompletion.create(
-                    model=g4f.models.default,
+                    model=model,
                     provider=provider,
                     messages=full_messages,
                     proxy=proxy,
-                    timeout=60
+                    timeout=45
                 )
-                if response and isinstance(response, str) and len(response.strip()) > 0:
+
+                if response and isinstance(response, str) and len(response.strip()) > 5:
+                    # Clean up response if it contains provider ads (common in free web versions)
+                    if "Generated by" in response and provider == g4f.Provider.PollinationsAI:
+                        response = response.split("Generated by")[0].strip()
                     return response
             except Exception as e:
-                logging.error(f"Provider {provider.__name__ if hasattr(provider, '__name__') else provider} failed: {e}")
+                logging.error(f"Manus Engine: {provider.__name__} failed: {e}")
                 continue
 
-        return "Error: All free AI providers are currently unavailable. Please try again in a few moments or check your internet connection."
+        return "Thought: I'm having trouble connecting to my brain (AI providers). I should check my internet connection.\nFinal Answer: I am currently offline. Please check your network and try again."
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     engine = AIEngine()
-    print(engine.generate_response([{"role": "user", "content": "Hello, who are you?"}]))
+    print(engine.generate_response([{"role": "user", "content": "Tell me about your capabilities."}]))

@@ -22,11 +22,11 @@ import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Dict, Optional
 
-from fastapi import FastAPI, HTTPException, Request, Depends, status
+from fastapi import FastAPI, HTTPException, Request, Depends, status, UploadFile, File
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 
 from backend.ai_engine import AIEngine
@@ -186,6 +186,19 @@ async def get_status():
 @app.get("/api/auth-check", dependencies=[Depends(verify_api_key)])
 async def auth_check():
     return {"authenticated": True}
+
+@app.post("/api/upload", dependencies=[Depends(verify_api_key)])
+async def upload_file(file: UploadFile = File(...)):
+    os.makedirs("data/uploads", exist_ok=True)
+    file_path = f"data/uploads/{file.filename}"
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+    return {"filename": file.filename, "path": file_path}
+
+@app.post("/api/clear-history", dependencies=[Depends(verify_api_key)])
+async def clear_history():
+    # Frontend handles chat history in localStorage, but we can clear server-side cache if added later
+    return {"message": "Chat history cleared"}
 
 if os.path.exists("frontend/dist"):
     app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
