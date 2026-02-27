@@ -75,6 +75,11 @@ def get_or_create_api_key():
     return key
 
 API_KEY = get_or_create_api_key()
+print("=" * 50)
+print(f"  YOUR API KEY IS: {API_KEY}")
+print("  Save this key to log in to the Web UI.")
+print("=" * 50)
+
 api_key_header = APIKeyHeader(name="X-API-Key")
 
 async def verify_api_key(api_key: str = Depends(api_key_header)):
@@ -176,5 +181,4 @@ if os.path.exists("frontend/dist"):
 
 if __name__ == "__main__":
     import uvicorn
-    print(f"Your API Key is: {API_KEY}")
     uvicorn.run(app, host="0.0.0.0", port=8000)
