@@ -7,6 +7,6 @@ pytest
 python-multipart
 python-dotenv
 pytest-mock
-duckduckgo_search
+duckduckgo_search==5.3.8
 beautifulsoup4
 requests

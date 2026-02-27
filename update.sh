@@ -22,6 +22,7 @@ fi
 
 # Update dependencies
 echo "Updating dependencies..."
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Rebuild frontend if needed
