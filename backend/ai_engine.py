@@ -2,12 +2,10 @@ import g4f
 import asyncio
 from typing import List, Dict, Optional, Any
 import logging
-from backend.browser_engine import BrowserEngine
 
 class AIEngine:
     def __init__(self, provider_name: str = "Gemini"):
         self.set_provider(provider_name)
-        self.browser_engine = BrowserEngine()
         self.system_prompt = (
             "You are Manus AI, the world's most capable autonomous AI agent. "
             "You don't just talk, you DEPLOY and SOLVE. You have full access to a shell environment "
@@ -40,28 +38,7 @@ class AIEngine:
         self.provider = mapping.get(name, g4f.Provider.Gemini)
 
     async def generate_response(self, messages: List[Dict[str, str]], proxy: Optional[str] = None) -> str:
-        # Construct the last prompt with full context (since we can't easily pass full history to free web UIs)
-        last_user_message = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
-        full_prompt = f"{self.system_prompt}\n\nHistory:\n"
-        for m in messages[-10:]:
-            full_prompt += f"{m['role'].capitalize()}: {m['content']}\n"
-        full_prompt += f"\nUser Goal: {last_user_message}"
-
-        # Try Headless Browser first for high-fidelity
-        if self.provider_name in ["Gemini", "ChatGPT"]:
-            try:
-                logging.info(f"Manus Engine: Attempting Browser Engine ({self.provider_name})")
-                if self.provider_name == "Gemini":
-                    response = await self.browser_engine.fetch_gemini(full_prompt)
-                else:
-                    response = await self.browser_engine.fetch_chatgpt(full_prompt)
-
-                if response and not response.startswith("Error:"):
-                    return response
-            except Exception as e:
-                logging.error(f"Manus Engine: Browser fallback to g4f: {e}")
-
-        # Fallback to g4f
+        # Construct messages for g4f
         full_messages = [{"role": "system", "content": self.system_prompt}]
         history = messages[-15:]
         full_messages.extend(history)

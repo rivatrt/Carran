@@ -1,9 +1,9 @@
 ================================================================================
-                    MANUS AI CLONE - USER GUIDE (MOBILE & TERMUX)
+                    MANUS AI CLONE - USER GUIDE (TERMUX)
 ================================================================================
 
 Welcome! This guide will help you set up and use your own Manus AI agent on
-Android using Termux. No complex coding required!
+Android using Termux. No complex coding or API keys required!
 
 --------------------------------------------------------------------------------
 STEP 1: INSTALL TERMUX
@@ -18,7 +18,7 @@ STEP 2: RUN THE INSTALLATION
 
    chmod +x install.sh && ./install.sh
 
-2. This will install Python, Node.js, and Chromium (the agent's brain).
+2. This will install Python, Node.js, and all necessary dependencies.
 3. This might take 5-10 minutes. If asked for [Y/n], always type 'Y'.
 
 --------------------------------------------------------------------------------
@@ -40,17 +40,13 @@ STEP 4: OPEN THE PREMIUM WEB UI
 4. You are now in the Manus Dashboard!
 
 --------------------------------------------------------------------------------
-STEP 5: SETUP THE "BRAIN" (SESSIONS)
+STEP 5: CHOOSE THE "BRAIN" (AI PROVIDERS)
 --------------------------------------------------------------------------------
-To use Gemini or ChatGPT without an API key, Manus needs your login session:
-1. Open Gemini (gemini.google.com) or ChatGPT in your mobile browser.
-2. Log in to your account.
-3. Use a "Cookie Editor" extension (on Kiwi Browser) or inspect tools to get
-   your cookies in JSON format.
-4. Go to Manus Web UI -> Settings.
-5. Paste the cookies into the "Headless Browser Cookies" box.
-6. Set "AI Engine Provider" to "Google Gemini" or "ChatGPT".
-7. Click "Save Changes".
+Manus uses several free AI providers (Gemini, ChatGPT, Blackbox, etc.)
+automatically via the g4f engine.
+1. Go to Manus Web UI -> Settings.
+2. Set "AI Engine Provider" to your preferred brain (e.g., Gemini or Blackbox).
+3. Click "Save Changes".
 
 --------------------------------------------------------------------------------
 STEP 6: CONFIGURE TELEGRAM (REMOTE ACCESS)

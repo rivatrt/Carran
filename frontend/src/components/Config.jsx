@@ -143,20 +143,6 @@ const Config = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-400 mb-3 ml-1">Headless Browser Cookies (JSON Array)</label>
-            <textarea
-              value={config.browser_cookies}
-              onChange={(e) => setConfig({ ...config, browser_cookies: e.target.value })}
-              rows="4"
-              className="w-full bg-[#0a0a0a] text-white border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-800 font-mono text-xs"
-              placeholder='[{"name": "session", "value": "...", "domain": ".google.com"}]'
-            />
-            <p className="text-[10px] text-gray-600 mt-2 ml-1">
-              Use a browser extension to export cookies in JSON format and paste them here to stay logged in.
-            </p>
-          </div>
-
           <div className="pt-4">
             <button
               onClick={handleSave}

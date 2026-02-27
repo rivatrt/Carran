@@ -21,3 +21,7 @@ INFO:     127.0.0.1:52478 - "POST /api/chat HTTP/1.1" 200 OK
 2026-02-27 15:43:47,812 - root - INFO - Manus Engine: Attempting BlackboxPro (g4f)
 2026-02-27 15:43:48,347 - root - ERROR - Manus Engine: BlackboxPro (g4f) failed: No valid Blackbox session found. Please log in to Blackbox AI in your browser first.
 2026-02-27 15:43:48,348 - root - INFO - Manus Engine: Attempting PollinationsAI (g4f)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49452]

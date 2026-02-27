@@ -23,10 +23,6 @@ pip install --upgrade pip
 echo "Installing Python dependencies (Fixed versions for Termux)..."
 pip install -r requirements.txt
 
-# Install Playwright browsers
-echo "Installing Playwright Chromium..."
-playwright install chromium
-
 # Setup Frontend
 echo "Building Frontend..."
 cd frontend

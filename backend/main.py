@@ -140,15 +140,6 @@ async def update_config(config: ConfigModel):
     save_config(config.dict())
     ai_engine.set_provider(config.ai_provider)
 
-    # Save cookies to the specific file for BrowserEngine
-    try:
-        cookies = json.loads(config.browser_cookies)
-        os.makedirs("data", exist_ok=True)
-        with open("data/cookies.json", "w") as f:
-            json.dump(cookies, f)
-    except Exception as e:
-        print(f"Error saving cookies: {e}")
-
     return {"message": "Config updated. Restart required for bot changes."}
 
 @app.post("/api/chat", dependencies=[Depends(verify_api_key)])
