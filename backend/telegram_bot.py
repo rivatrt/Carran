@@ -48,7 +48,7 @@ class TelegramBot:
         for _ in range(5):
             await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=constants.ChatAction.TYPING)
 
-            response = await asyncio.to_thread(self.ai_engine.generate_response, messages)
+            response = await self.ai_engine.generate_response(messages)
 
             # Update thoughts
             try:

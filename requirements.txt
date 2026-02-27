@@ -7,3 +7,4 @@ pytest
 python-multipart
 python-dotenv
 pytest-mock
+playwright

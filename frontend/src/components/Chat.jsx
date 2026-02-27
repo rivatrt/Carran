@@ -180,16 +180,16 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="px-4 pb-6 pt-2 bg-gradient-to-t from-[#000] to-transparent">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative flex items-end bg-[#121212] border border-[#222] rounded-[2rem] p-2 transition-all focus-within:border-blue-500/50 shadow-2xl">
+      <div className="px-4 pb-10 pt-4 bg-gradient-to-t from-[#000] via-[#000]/90 to-transparent sticky bottom-0">
+        <div className="max-w-screen-sm mx-auto">
+          <div className="relative flex items-end bg-[#111] border border-[#222] rounded-[2.5rem] p-2 transition-all focus-within:border-blue-500/50 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             <button
               onClick={() => fileInputRef.current.click()}
               disabled={status || isUploading}
-              className="p-3 text-gray-400 hover:text-blue-500 transition-colors disabled:opacity-30"
+              className="p-3.5 text-gray-500 hover:text-white transition-colors disabled:opacity-30"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
             </button>
             <input
@@ -209,8 +209,8 @@ const Chat = () => {
                   handleSend();
                 }
               }}
-              className="flex-1 bg-transparent text-white px-3 py-3 focus:outline-none placeholder:text-gray-600 resize-none max-h-32 text-[16px]"
-              placeholder={isUploading ? "Uploading file..." : "Give me a mission..."}
+              className="flex-1 bg-transparent text-white px-3 py-3.5 focus:outline-none placeholder:text-gray-700 resize-none max-h-32 text-[15px] font-medium"
+              placeholder={isUploading ? "Uploading..." : "Message Manus..."}
               disabled={status || isUploading}
             />
 
@@ -218,13 +218,13 @@ const Chat = () => {
               onClick={handleSend}
               aria-label="Send mission"
               disabled={status || !input.trim() || isUploading}
-              className="w-11 h-11 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 disabled:bg-[#1a1a1a] disabled:text-gray-700 transition-all shadow-lg transform active:scale-90 flex-shrink-0"
+              className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-200 disabled:bg-[#1a1a1a] disabled:text-gray-800 transition-all shadow-xl transform active:scale-90 flex-shrink-0"
             >
               {status ? (
-                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
               ) : (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                  <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
               )}
             </button>

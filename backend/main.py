@@ -39,6 +39,7 @@ class ConfigModel(BaseModel):
     ai_provider: str = "PollinationsAI"
     allowed_user_ids: List[int] = []
     proxy: str = ""
+    browser_cookies: str = "[]"
 
 class ChatMessage(BaseModel):
     role: str
@@ -58,7 +59,8 @@ def load_config():
         "telegram_token": "",
         "ai_provider": "PollinationsAI",
         "allowed_user_ids": [],
-        "proxy": ""
+        "proxy": "",
+        "browser_cookies": "[]"
     }
 
 def save_config(config: dict):
@@ -137,6 +139,16 @@ async def get_config():
 async def update_config(config: ConfigModel):
     save_config(config.dict())
     ai_engine.set_provider(config.ai_provider)
+
+    # Save cookies to the specific file for BrowserEngine
+    try:
+        cookies = json.loads(config.browser_cookies)
+        os.makedirs("data", exist_ok=True)
+        with open("data/cookies.json", "w") as f:
+            json.dump(cookies, f)
+    except Exception as e:
+        print(f"Error saving cookies: {e}")
+
     return {"message": "Config updated. Restart required for bot changes."}
 
 @app.post("/api/chat", dependencies=[Depends(verify_api_key)])
@@ -149,7 +161,7 @@ async def chat(messages: List[ChatMessage]):
             for i in range(5): # Allow up to 5 steps
                 yield f"data: {json.dumps({'status': 'thinking'})}\n\n"
 
-                response = await asyncio.to_thread(ai_engine.generate_response, msgs, config.get("proxy"))
+                response = await ai_engine.generate_response(msgs, config.get("proxy"))
                 yield f"data: {json.dumps({'status': 'thought', 'content': response})}\n\n"
 
                 command = executor.parse_action(response)
