@@ -1,3 +1,19 @@
+import sys
+from typing import ForwardRef
+
+def patch_pydantic():
+    import pydantic.typing
+    if sys.version_info >= (3, 12):
+        original_evaluate_forwardref = pydantic.typing.evaluate_forwardref
+        def patched_evaluate_forwardref(type_, globalns, localns):
+            try:
+                return type_._evaluate(globalns, localns, recursive_guard=set())
+            except TypeError:
+                return type_._evaluate(globalns, localns, set())
+        pydantic.typing.evaluate_forwardref = patched_evaluate_forwardref
+
+patch_pydantic()
+
 import os
 import json
 import secrets

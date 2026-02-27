@@ -12,6 +12,7 @@ pkg install -y python nodejs-lts git
 
 # Create virtual environment
 echo "Setting up virtual environment..."
+rm -rf venv # Clean start
 python3 -m venv venv
 source venv/bin/activate
 
@@ -19,7 +20,7 @@ source venv/bin/activate
 pip install --upgrade pip
 
 # Install python packages
-echo "Installing Python dependencies..."
+echo "Installing Python dependencies (Fixed versions for Termux)..."
 pip install -r requirements.txt
 
 # Setup Frontend

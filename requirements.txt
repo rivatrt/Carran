@@ -1,8 +1,8 @@
-fastapi
+fastapi==0.99.1
 uvicorn
 g4f
 python-telegram-bot
-pydantic<2.0.0
+pydantic==1.10.13
 pytest
 python-multipart
 python-dotenv
