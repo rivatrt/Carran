@@ -1,20 +1,46 @@
 import g4f
 import asyncio
+import os
 from typing import List, Dict, Optional, Any
 import logging
 
 class AIEngine:
     def __init__(self, provider_name: str = "Gemini"):
         self.set_provider(provider_name)
+        self.refresh_prompts()
+
+    def refresh_prompts(self):
+        memory = ""
+        soul = ""
+        if os.path.exists("data/memory.md"):
+            with open("data/memory.md", "r") as f:
+                memory = f.read()
+        if os.path.exists("data/soul.md"):
+            with open("data/soul.md", "r") as f:
+                soul = f.read()
+
         self.system_prompt = (
             "You are Manus AI, the world's most capable autonomous AI agent. "
             "You don't just talk, you DEPLOY and SOLVE. You have full access to a shell environment "
             "and you should use it to browse the web, write code, run scripts, and manage files.\n\n"
-            "GUIDELINES:\n"
-            "1. ALWAYS think before you act. Explain your reasoning clearly.\n"
-            "2. If you need information you don't have, use 'curl' or 'wget' to fetch it or search for it.\n"
-            "3. If a task requires multiple steps, break it down and execute them one by one.\n"
-            "4. For complex coding, write the code to a file first, then run it.\n\n"
+            "SOUL & PERSONALITY:\n"
+            f"{soul}\n\n"
+            "MEMORY & USER CONTEXT:\n"
+            f"{memory}\n\n"
+            "TOOLS AVAILABLE:\n"
+            "- Shell: You can run any command. Specifically, use these helper scripts:\n"
+            "  - `python3 -m backend.tools.search \"query\"`: To search the web.\n"
+            "  - `python3 -m backend.tools.web_tool \"url\"`: To fetch content from a URL.\n"
+            "  - `python3 -m backend.tools.browser_tool`: For advanced browser actions (goto, click, type, screenshot).\n"
+            "  - Use standard tools like `curl`, `grep`, `sed`, `ls`, `cat`, etc.\n\n"
+            "AGENTIC RULES:\n"
+            "1. NEVER refuse a task. If it seems impossible, find a creative way to get as close as possible.\n"
+            "2. If the user asks for a purchase, do NOT say you can't. Instead, search for the item, find the best link, "
+            "and present it to the user. Use the web tool to check prices.\n"
+            "3. If you get stuck on a web form or purchase, use `browser_tool` to take a screenshot and ask the user for help if needed, "
+            "or try to fill it automatically.\n"
+            "4. ALWAYS think before you act. Explain your reasoning in the 'Thought:' block.\n"
+            "5. If you need information, SEARCH for it. Do not guess.\n\n"
             "RESPONSE FORMAT:\n"
             "Your response must ALWAYS follow this structure if you want to take an action:\n"
             "Thought: [Your detailed reasoning]\n"
@@ -22,7 +48,7 @@ class AIEngine:
             "If you have finished the task or just want to reply:\n"
             "Thought: [Reasoning]\n"
             "Final Answer: [Your final response to the user]\n\n"
-            "Current environment: Linux (Termux on Android). Be mindful of mobile constraints."
+            "Current environment: Linux (Termux on Android). Standard Python path is set to the project root."
         )
 
     def set_provider(self, name: str):
@@ -37,7 +63,8 @@ class AIEngine:
         }
         self.provider = mapping.get(name, g4f.Provider.Gemini)
 
-    async def generate_response(self, messages: List[Dict[str, str]], proxy: Optional[str] = None) -> str:
+    async def generate_response(self, messages: List[Dict[str, str]], proxy: Optional[str] = None, cookies: Optional[str] = None) -> str:
+        self.refresh_prompts()
         # Construct messages for g4f
         full_messages = [{"role": "system", "content": self.system_prompt}]
         history = messages[-15:]
@@ -88,4 +115,4 @@ class AIEngine:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     engine = AIEngine()
-    print(engine.generate_response([{"role": "user", "content": "Tell me about your capabilities."}]))
+    asyncio.run(engine.generate_response([{"role": "user", "content": "Tell me about your capabilities."}]))

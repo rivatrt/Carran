@@ -7,6 +7,8 @@ const Chat = () => {
   const [status, setStatus] = useState(null); // 'thinking', 'executing', 'done'
   const [currentStep, setCurrentStep] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [screenshotUrl, setScreenshotUrl] = useState(null);
+  const [showBrowser, setShowBrowser] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -23,6 +25,7 @@ const Chat = () => {
     if (window.confirm('Start a new chat? Current history will be cleared.')) {
       setMessages([]);
       saveMessages([]);
+      setScreenshotUrl(null);
       await clearHistory();
     }
   };
@@ -97,11 +100,20 @@ const Chat = () => {
             } else if (data.status === 'executing') {
               setStatus('executing');
               setCurrentStep(`Action: ${data.command.substring(0, 30)}${data.command.length > 30 ? '...' : ''}`);
+              if (data.command.includes('browser_tool')) {
+                  // If it's a browser action, we might have a screenshot soon
+              }
             } else if (data.status === 'result') {
               const systemMsg = { role: 'system', content: data.output };
               currentMessages = [...currentMessages, { role: 'assistant', content: assistantContent }, systemMsg];
               setMessages(currentMessages);
               assistantContent = '';
+
+              // If the result contains a screenshot notification
+              if (data.output.includes('Screenshot saved')) {
+                  setScreenshotUrl(`/test_screenshot.png?t=${Date.now()}`); // Use a cache buster
+                  setShowBrowser(true);
+              }
             } else if (data.status === 'done') {
               setStatus(null);
               setCurrentStep('');
@@ -120,7 +132,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden animate-fadeIn">
       {/* Mobile Top Bar */}
       <div className="lg:hidden flex justify-between items-center px-4 py-2 bg-[#000000] border-b border-[#111]">
         <button
@@ -134,11 +146,11 @@ const Chat = () => {
 
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 scrollbar-hide">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center px-10 animate-in fade-in zoom-in duration-700">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl shadow-blue-500/20">
-              <span className="text-white text-4xl font-bold">M</span>
+          <div className="flex flex-col items-center justify-center h-full text-center px-10">
+            <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-[3rem] flex items-center justify-center mb-10 shadow-2xl shadow-blue-500/20">
+              <span className="text-white text-5xl font-bold">M</span>
             </div>
-            <h2 className="text-2xl font-bold mb-3 tracking-tight">I am Manus.</h2>
+            <h2 className="text-3xl font-bold mb-4 tracking-tight">I am Manus.</h2>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
               Tell me your goal. I can browse, code, and execute tasks on your device autonomously.
             </p>
@@ -146,13 +158,13 @@ const Chat = () => {
         )}
 
         {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 duration-300`}>
-            <div className={`max-w-[90%] lg:max-w-[75%] rounded-[1.8rem] px-5 py-3.5 ${
+          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
+            <div className={`max-w-[92%] lg:max-w-[80%] rounded-[2rem] px-6 py-4 ${
               m.role === 'user'
-                ? 'bg-[#2563eb] text-white shadow-lg rounded-tr-md'
+                ? 'bg-[#0381fe] text-white shadow-lg rounded-tr-md'
                 : m.role === 'system'
                 ? 'bg-[#111] text-blue-400 font-mono text-xs border border-blue-900/20 rounded-tl-md'
-                : 'bg-[#121212] text-gray-200 border border-[#222] shadow-sm rounded-tl-md'
+                : 'bg-[#1a1a1a] text-gray-200 border border-[#222] shadow-sm rounded-tl-md'
             }`}>
               {m.role === 'system' && (
                 <div className="flex items-center space-x-2 mb-2 opacity-50 text-[9px] uppercase font-bold tracking-tighter">
@@ -160,35 +172,53 @@ const Chat = () => {
                    <span>System Observation</span>
                 </div>
               )}
-              <pre className="whitespace-pre-wrap font-sans text-[15px] leading-relaxed overflow-x-auto">{m.content}</pre>
+              <pre className="whitespace-pre-wrap font-sans text-[16px] leading-relaxed overflow-x-auto">{m.content}</pre>
             </div>
           </div>
         ))}
 
         {status && (
           <div className="flex justify-start">
-            <div className="bg-[#121212] border border-[#222] rounded-[1.8rem] rounded-tl-md px-5 py-3.5 flex items-center space-x-4 shadow-xl">
-              <div className="flex space-x-1.5">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+            <div className="bg-[#1a1a1a] border border-[#222] rounded-[2rem] rounded-tl-md px-6 py-4 flex items-center space-x-4 shadow-xl">
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
               </div>
               <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{currentStep}</span>
             </div>
           </div>
         )}
+
+        {screenshotUrl && showBrowser && (
+           <div className="bg-[#121212] border border-[#222] rounded-[2.5rem] p-4 space-y-4 animate-fadeIn">
+              <div className="flex justify-between items-center">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Agent Visual Bridge</h3>
+                  <button onClick={() => setShowBrowser(false)} className="text-gray-600 hover:text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                  </button>
+              </div>
+              <div className="rounded-[1.5rem] overflow-hidden border border-[#222]">
+                  <img src={screenshotUrl} alt="Agent Browser" className="w-full h-auto" />
+              </div>
+              <p className="text-[10px] text-gray-500 text-center italic">Agent is currently at this page. You can give it instructions to click or type.</p>
+           </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="px-4 pb-10 pt-4 bg-gradient-to-t from-[#000] via-[#000]/90 to-transparent sticky bottom-0">
+      <div className="px-6 pb-12 pt-4 bg-gradient-to-t from-[#000] via-[#000]/90 to-transparent sticky bottom-0">
         <div className="max-w-screen-sm mx-auto">
-          <div className="relative flex items-end bg-[#111] border border-[#222] rounded-[2.5rem] p-2 transition-all focus-within:border-blue-500/50 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <div className="relative flex items-end bg-[#1a1a1a] border border-[#222] rounded-[3rem] p-2 transition-all focus-within:border-blue-500/50 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
             <button
               onClick={() => fileInputRef.current.click()}
               disabled={status || isUploading}
-              className="p-3.5 text-gray-500 hover:text-white transition-colors disabled:opacity-30"
+              className="p-4 text-gray-500 hover:text-white transition-colors disabled:opacity-30"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
             </button>
@@ -209,7 +239,7 @@ const Chat = () => {
                   handleSend();
                 }
               }}
-              className="flex-1 bg-transparent text-white px-3 py-3.5 focus:outline-none placeholder:text-gray-700 resize-none max-h-32 text-[15px] font-medium"
+              className="flex-1 bg-transparent text-white px-3 py-4 focus:outline-none placeholder:text-gray-700 resize-none max-h-32 text-[16px] font-medium"
               placeholder={isUploading ? "Uploading..." : "Message Manus..."}
               disabled={status || isUploading}
             />
@@ -218,24 +248,27 @@ const Chat = () => {
               onClick={handleSend}
               aria-label="Send mission"
               disabled={status || !input.trim() || isUploading}
-              className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-200 disabled:bg-[#1a1a1a] disabled:text-gray-800 transition-all shadow-xl transform active:scale-90 flex-shrink-0"
+              className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-200 disabled:bg-[#222] disabled:text-gray-800 transition-all shadow-xl transform active:scale-90 flex-shrink-0"
             >
               {status ? (
-                <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
               )}
             </button>
           </div>
 
-          <div className="mt-3 hidden lg:flex justify-center items-center space-x-4">
-             <button onClick={handleNewChat} className="text-[10px] font-bold text-gray-500 hover:text-white transition-colors tracking-widest uppercase">
+          <div className="mt-4 flex justify-center items-center space-x-6">
+             <button onClick={handleNewChat} className="text-[11px] font-bold text-gray-500 hover:text-white transition-colors tracking-widest uppercase">
                + New Mission
              </button>
-             <span className="text-gray-800">•</span>
-             <span className="text-[10px] text-gray-700 uppercase tracking-widest">Web Engine: {localStorage.getItem('preferred_provider') || 'Gemini'}</span>
+             {screenshotUrl && (
+                 <button onClick={() => setShowBrowser(!showBrowser)} className="text-[11px] font-bold text-blue-500 hover:text-blue-400 transition-colors tracking-widest uppercase">
+                   {showBrowser ? 'Hide Browser' : 'Show Browser'}
+                 </button>
+             )}
           </div>
         </div>
       </div>

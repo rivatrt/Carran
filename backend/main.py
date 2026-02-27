@@ -146,13 +146,14 @@ async def update_config(config: ConfigModel):
 async def chat(messages: List[ChatMessage]):
     config = load_config()
     msgs = [m.dict() for m in messages]
+    cookies = config.get("browser_cookies", "[]")
 
     async def event_generator():
         try:
-            for i in range(5): # Allow up to 5 steps
+            for i in range(10): # Allow up to 10 steps for more complex tasks
                 yield f"data: {json.dumps({'status': 'thinking'})}\n\n"
 
-                response = await ai_engine.generate_response(msgs, config.get("proxy"))
+                response = await ai_engine.generate_response(msgs, config.get("proxy"), cookies)
                 yield f"data: {json.dumps({'status': 'thought', 'content': response})}\n\n"
 
                 command = executor.parse_action(response)
