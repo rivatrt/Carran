@@ -1,20 +1,23 @@
 import g4f
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import logging
 
 class AIEngine:
     def __init__(self, provider_name: str = "PollinationsAI"):
         self.set_provider(provider_name)
         self.system_prompt = (
-            "You are an autonomous AI agent similar to Manus AI. "
-            "You can think and then take action by executing shell commands. "
-            "When you need to run a command, use the following format:\n"
-            "Thought: [Your reasoning]\n"
-            "Action: [The shell command to run]\n"
-            "If you don't need to run a command, just reply normally."
+            "You are Manus AI, an advanced autonomous AI agent. "
+            "You can think, analyze, and execute shell commands to accomplish tasks. "
+            "Your goal is to be helpful, efficient, and precise.\n\n"
+            "When you need to perform an action, follow this structure:\n"
+            "Thought: [Explain your reasoning and what you plan to do]\n"
+            "Action: [The exact shell command to run]\n\n"
+            "After you get the output of the command, continue your thought process. "
+            "If you have completed the task, provide a final summary without an Action."
         )
 
     def set_provider(self, name: str):
+        self.provider_name = name
         try:
             if name == "Gemini":
                 self.provider = g4f.Provider.Gemini
@@ -28,37 +31,48 @@ class AIEngine:
             self.provider = g4f.Provider.PollinationsAI
 
     def generate_response(self, messages: List[Dict[str, str]], proxy: Optional[str] = None) -> str:
-        full_messages = [{"role": "system", "content": self.system_prompt}] + messages
+        # Prepare messages
+        full_messages = [{"role": "system", "content": self.system_prompt}]
 
-        # List of providers to try as fallback
-        providers_to_try = [
-            self.provider,
+        # Filter and add messages to avoid too large history
+        # We keep the last 10 messages for context
+        history = messages[-10:]
+        full_messages.extend(history)
+
+        # List of providers to try as fallback if the selected one fails
+        providers_to_try = [self.provider]
+
+        # Common reliable free providers
+        # Using providers that are commonly available in g4f
+        fallbacks = [
             g4f.Provider.PollinationsAI,
             g4f.Provider.BlackboxPro,
-            g4f.Provider.DeepInfra,
             g4f.Provider.OpenaiChat
         ]
 
-        # Remove duplicates while preserving order
-        seen = set()
-        providers_to_try = [x for x in providers_to_try if not (x in seen or seen.add(x))]
+        for f in fallbacks:
+            if f != self.provider:
+                providers_to_try.append(f)
 
         for provider in providers_to_try:
             try:
+                logging.info(f"Trying provider: {provider.__name__ if hasattr(provider, '__name__') else provider}")
                 response = g4f.ChatCompletion.create(
                     model=g4f.models.default,
                     provider=provider,
                     messages=full_messages,
-                    proxy=proxy
+                    proxy=proxy,
+                    timeout=60
                 )
-                if response and isinstance(response, str) and len(response) > 0:
+                if response and isinstance(response, str) and len(response.strip()) > 0:
                     return response
             except Exception as e:
                 logging.error(f"Provider {provider.__name__ if hasattr(provider, '__name__') else provider} failed: {e}")
                 continue
 
-        return "Error: All free AI providers failed. Please try again later or check your internet connection."
+        return "Error: All free AI providers are currently unavailable. Please try again in a few moments or check your internet connection."
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     engine = AIEngine()
-    print(engine.generate_response([{"role": "user", "content": "Hello"}]))
+    print(engine.generate_response([{"role": "user", "content": "Hello, who are you?"}]))

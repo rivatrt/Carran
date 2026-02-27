@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from telegram import Update
+from telegram import Update, constants
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 from backend.ai_engine import AIEngine
 from backend.executor import CommandExecutor
@@ -20,28 +20,47 @@ class TelegramBot:
 
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         if self.allowed_user_ids and update.effective_user.id not in self.allowed_user_ids:
-            await update.message.reply_text("Unauthorized. Please add your User ID to the allowed list in the Web UI.")
+            await update.message.reply_text(f"❌ Unauthorized. Your User ID: {update.effective_user.id}\nAdd it in the Web UI to use the bot.")
             logging.warning(f"Unauthorized access attempt from user ID: {update.effective_user.id}")
             return
 
         user_text = update.message.text
         messages = [{"role": "user", "content": user_text}]
 
+        status_msg = await update.message.reply_text("🔍 Thinking...")
+
         # Multi-turn autonomous loop
-        for _ in range(3):
-            response = self.ai_engine.generate_response(messages)
-            await update.message.reply_text(response)
+        for _ in range(5):
+            await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=constants.ChatAction.TYPING)
+
+            response = await asyncio.to_thread(self.ai_engine.generate_response, messages)
+
+            # Update thoughts
+            try:
+                await status_msg.edit_text(response)
+            except Exception:
+                status_msg = await update.message.reply_text(response)
 
             command = self.executor.parse_action(response)
             if command:
-                await update.message.reply_text(f"Executing: {command}")
-                result = self.executor.execute(command)
-                output = f"Output:\n{result['stdout']}"
+                exec_msg = await update.message.reply_text(f"⚙️ Executing: `{command}`", parse_mode=constants.ParseMode.MARKDOWN)
+
+                result = await asyncio.to_thread(self.executor.execute, command)
+                output = result['stdout']
                 if result['stderr']:
                     output += f"\nError:\n{result['stderr']}"
 
+                # Limit output size for telegram
+                if len(output) > 3000:
+                    output = output[:3000] + "... (truncated)"
+
+                await exec_msg.edit_text(f"✅ Output:\n```\n{output}\n```", parse_mode=constants.ParseMode.MARKDOWN)
+
                 messages.append({"role": "assistant", "content": response})
                 messages.append({"role": "system", "content": f"Command Output: {output}"})
+
+                # Re-post thinking message for next turn
+                status_msg = await update.message.reply_text("🔍 Thinking about next step...")
             else:
                 break
 

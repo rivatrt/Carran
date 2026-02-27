@@ -18,6 +18,7 @@ import os
 import json
 import secrets
 import threading
+import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Dict, Optional
 
@@ -25,6 +26,7 @@ from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from backend.ai_engine import AIEngine
@@ -142,27 +144,36 @@ async def chat(messages: List[ChatMessage]):
     config = load_config()
     msgs = [m.dict() for m in messages]
 
-    final_output = ""
-    last_action = None
+    async def event_generator():
+        try:
+            for i in range(5): # Allow up to 5 steps
+                yield f"data: {json.dumps({'status': 'thinking'})}\n\n"
 
-    for _ in range(3):
-        response = ai_engine.generate_response(msgs, proxy=config.get("proxy"))
-        command = executor.parse_action(response)
+                response = await asyncio.to_thread(ai_engine.generate_response, msgs, config.get("proxy"))
+                yield f"data: {json.dumps({'status': 'thought', 'content': response})}\n\n"
 
-        if command:
-            last_action = command
-            result = executor.execute(command)
-            output = f"Output:\n{result['stdout']}"
-            if result['stderr']:
-                output += f"\nError:\n{result['stderr']}"
+                command = executor.parse_action(response)
+                if command:
+                    yield f"data: {json.dumps({'status': 'executing', 'command': command})}\n\n"
 
-            final_output += f"\nExecuted: {command}\n{output}"
-            msgs.append({"role": "assistant", "content": response})
-            msgs.append({"role": "system", "content": f"Command Output: {output}"})
-        else:
-            return {"response": response, "action": last_action, "output": final_output}
+                    result = await asyncio.to_thread(executor.execute, command)
+                    output = f"Output:\n{result['stdout']}"
+                    if result['stderr']:
+                        output += f"\nError:\n{result['stderr']}"
 
-    return {"response": response, "action": last_action, "output": final_output}
+                    yield f"data: {json.dumps({'status': 'result', 'output': output})}\n\n"
+
+                    msgs.append({"role": "assistant", "content": response})
+                    msgs.append({"role": "system", "content": f"Command Output: {output}"})
+                else:
+                    yield f"data: {json.dumps({'status': 'done'})}\n\n"
+                    return
+
+            yield f"data: {json.dumps({'status': 'done', 'message': 'Maximum steps reached'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'status': 'error', 'message': str(e)})}\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @app.get("/api/status")
 async def get_status():

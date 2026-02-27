@@ -20,7 +20,7 @@ const Config = () => {
   const handleSave = async () => {
     try {
       await updateConfig(config);
-      setMessage('Configuration saved successfully! Restart the server to apply changes to the Telegram bot.');
+      setMessage('Configuration saved successfully!');
       setTimeout(() => setMessage(''), 5000);
     } catch (error) {
       setMessage('Error saving configuration.');
@@ -45,89 +45,122 @@ const Config = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow mt-10 overflow-y-auto max-h-[85vh]">
-      <h2 className="text-2xl font-bold mb-6">Configuration</h2>
+    <div className="flex-1 overflow-y-auto p-4 lg:p-6 scrollbar-hide">
+      <div className="max-w-3xl mx-auto space-y-8 pb-10">
+        <header className="mb-10">
+          <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
+          <p className="text-gray-500 mt-2">Customize your Manus AI experience</p>
+        </header>
 
-      <div className="mb-6 p-4 border rounded-lg bg-gray-50">
-        <h3 className="font-semibold mb-2">System Status</h3>
-        <p>Backend: <span className="text-green-600">{status.status}</span></p>
-        <p>Telegram Bot: <span className={status.bot_active ? 'text-green-600' : 'text-red-600'}>
-          {status.bot_active ? 'Active' : 'Inactive'}
-        </span></p>
-      </div>
+        <section className="bg-[#121212] rounded-[2.5rem] p-8 border border-[#222222] shadow-xl">
+          <h3 className="text-lg font-bold mb-6 flex items-center">
+            <span className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></span>
+            System Status
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-[#0a0a0a] p-5 rounded-[1.5rem] border border-[#1a1a1a]">
+              <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Backend Server</p>
+              <p className="text-xl font-bold text-white capitalize">{status.status}</p>
+            </div>
+            <div className="bg-[#0a0a0a] p-5 rounded-[1.5rem] border border-[#1a1a1a]">
+              <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Telegram Bot</p>
+              <p className={`text-xl font-bold ${status.bot_active ? 'text-green-500' : 'text-red-500'}`}>
+                {status.bot_active ? 'Connected' : 'Disconnected'}
+              </p>
+            </div>
+          </div>
+        </section>
 
-      <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Telegram Bot Token</label>
-          <input
-            type="password"
-            value={config.telegram_token}
-            onChange={(e) => setConfig({ ...config, telegram_token: e.target.value })}
-            className="mt-1 block w-full border rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your telegram bot token"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Allowed Telegram User IDs</label>
-          <div className="flex space-x-2 mb-2">
+        <section className="bg-[#121212] rounded-[2.5rem] p-8 border border-[#222222] shadow-xl space-y-8">
+          <div>
+            <label className="block text-sm font-semibold text-gray-400 mb-3 ml-1">Telegram Bot Token</label>
             <input
-              type="number"
-              value={newUserId}
-              onChange={(e) => setNewUserId(e.target.value)}
-              className="flex-1 border rounded-md px-3 py-2"
-              placeholder="User ID (e.g. 12345678)"
+              type="password"
+              value={config.telegram_token}
+              onChange={(e) => setConfig({ ...config, telegram_token: e.target.value })}
+              className="w-full bg-[#0a0a0a] text-white border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-800"
+              placeholder="123456789:ABCDEF..."
             />
-            <button onClick={addUser} className="bg-blue-600 text-white px-4 py-2 rounded">Add</button>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {config.allowed_user_ids.map(id => (
-              <span key={id} className="bg-gray-200 px-2 py-1 rounded flex items-center">
-                {id}
-                <button onClick={() => removeUser(id)} className="ml-2 text-red-500 font-bold">×</button>
-              </span>
-            ))}
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-400 mb-3 ml-1">Admin User IDs</label>
+            <div className="flex space-x-3 mb-4">
+              <input
+                type="number"
+                value={newUserId}
+                onChange={(e) => setNewUserId(e.target.value)}
+                className="flex-1 bg-[#0a0a0a] text-white border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                placeholder="Telegram User ID"
+              />
+              <button onClick={addUser} className="bg-white text-black font-bold px-8 rounded-2xl hover:bg-gray-200 transition-all active:scale-95">Add</button>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {config.allowed_user_ids.map(id => (
+                <div key={id} className="bg-blue-600/10 text-blue-500 border border-blue-500/20 px-4 py-2 rounded-xl flex items-center group">
+                  <span className="font-mono text-sm">{id}</span>
+                  <button onClick={() => removeUser(id)} className="ml-3 hover:text-red-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+              {config.allowed_user_ids.length === 0 && <p className="text-gray-700 text-sm italic ml-1">No admin users configured</p>}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">AI Provider</label>
-          <select
-            value={config.ai_provider}
-            onChange={(e) => setConfig({ ...config, ai_provider: e.target.value })}
-            className="mt-1 block w-full border rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="PollinationsAI">PollinationsAI (Free, Fast)</option>
-            <option value="Gemini">Gemini (Free Web Version)</option>
-            <option value="ChatGPT">ChatGPT (Free Web Version)</option>
-            <option value="Blackbox">Blackbox AI (Free)</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Proxy (Optional)</label>
-          <input
-            type="text"
-            value={config.proxy}
-            onChange={(e) => setConfig({ ...config, proxy: e.target.value })}
-            className="mt-1 block w-full border rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="http://user:pass@host:port"
-          />
-          <p className="text-xs text-gray-500 mt-1">Recommended for bypassing strict anti-bot detection.</p>
-        </div>
-
-        <button
-          onClick={handleSave}
-          className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-200"
-        >
-          Save Configuration
-        </button>
-
-        {message && (
-          <div className={`p-3 rounded ${message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-            {message}
+          <div>
+            <label className="block text-sm font-semibold text-gray-400 mb-3 ml-1">AI Engine Provider</label>
+            <div className="relative">
+              <select
+                value={config.ai_provider}
+                onChange={(e) => setConfig({ ...config, ai_provider: e.target.value })}
+                className="w-full bg-[#0a0a0a] text-white border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none cursor-pointer"
+              >
+                <option value="PollinationsAI">PollinationsAI (Free, Super Fast)</option>
+                <option value="Gemini">Google Gemini (Advanced)</option>
+                <option value="ChatGPT">OpenAI ChatGPT (Classic)</option>
+                <option value="Blackbox">Blackbox AI (Coding Expert)</option>
+              </select>
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
           </div>
-        )}
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-400 mb-3 ml-1">Global Proxy (Optional)</label>
+            <input
+              type="text"
+              value={config.proxy}
+              onChange={(e) => setConfig({ ...config, proxy: e.target.value })}
+              className="w-full bg-[#0a0a0a] text-white border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-800"
+              placeholder="http://user:pass@host:port"
+            />
+          </div>
+
+          <div className="pt-4">
+            <button
+              onClick={handleSave}
+              className="w-full bg-blue-600 text-white font-bold py-5 rounded-3xl hover:bg-blue-700 transition-all shadow-[0_10px_40px_rgba(37,99,235,0.3)] transform active:scale-[0.98]"
+            >
+              Save Changes
+            </button>
+          </div>
+
+          {message && (
+            <div className={`p-5 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300 ${message.includes('Error') ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
+              <p className="text-center font-semibold">{message}</p>
+            </div>
+          )}
+        </section>
+
+        <p className="text-center text-gray-700 text-xs py-10 uppercase tracking-[0.3em]">
+          Version 2.0 • Build 2024.1
+        </p>
       </div>
     </div>
   );
