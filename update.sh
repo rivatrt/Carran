@@ -24,6 +24,10 @@ fi
 echo "Updating dependencies..."
 pip install -r requirements.txt
 
+# Install Playwright browsers
+echo "Installing/Updating Playwright Chromium..."
+playwright install chromium
+
 # Rebuild frontend if needed
 echo "Rebuilding frontend..."
 cd frontend
