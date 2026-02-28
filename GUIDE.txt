@@ -1,8 +1,8 @@
 ================================================================================
-                    CARREN AI CLONE - USER GUIDE (TERMUX)
+                    CARRAN AI CLONE - USER GUIDE (TERMUX)
 ================================================================================
 
-Welcome! This guide will help you set up and use your own Carren AI agent on
+Welcome! This guide will help you set up and use your own Carran AI agent on
 Android using Termux. No complex coding or API keys required!
 
 --------------------------------------------------------------------------------
@@ -37,14 +37,14 @@ STEP 4: OPEN THE PREMIUM WEB UI
 1. Open Chrome or any browser on your phone.
 2. Go to: http://localhost:8000
 3. Paste your "Access Key" and click "Sign In".
-4. You are now in the Carren Dashboard!
+4. You are now in the Carran Dashboard!
 
 --------------------------------------------------------------------------------
 STEP 5: CHOOSE THE "BRAIN" (AI PROVIDERS)
 --------------------------------------------------------------------------------
-Carren uses several free AI providers (Gemini, ChatGPT, Blackbox, etc.)
+Carran uses several free AI providers (Gemini, ChatGPT, Blackbox, etc.)
 automatically via the g4f engine.
-1. Go to Carren Web UI -> Settings.
+1. Go to Carran Web UI -> Settings.
 2. Set "AI Engine Provider" to your preferred brain (e.g., Gemini or Blackbox).
 3. Click "Save Changes".
 
@@ -53,18 +53,18 @@ STEP 6: CONFIGURE TELEGRAM (REMOTE ACCESS)
 --------------------------------------------------------------------------------
 1. Get a "Bot Token" from @BotFather on Telegram.
 2. Get your "User ID" from @userinfobot.
-3. In Carren Web UI -> Settings:
+3. In Carran Web UI -> Settings:
    - Paste your Token.
    - Add your User ID to the whitelist.
 4. Save and RESTART Termux (Ctrl+C and ./start.sh).
-5. Now you can chat with Carren directly on Telegram!
+5. Now you can chat with Carran directly on Telegram!
 
 --------------------------------------------------------------------------------
 STEP 7: USING THE AGENT
 --------------------------------------------------------------------------------
-- CHAT: Type "Message Carren..." in the bottom bar.
+- CHAT: Type "Message Carran..." in the bottom bar.
 - FILES: Click the "+" button in the chat bar to upload files/photos.
-- MISSION: Carren will THINK (Blue bubbles), ACT (Run commands), and finish!
+- MISSION: Carran will THINK (Blue bubbles), ACT (Run commands), and finish!
 
 --------------------------------------------------------------------------------
 SAFETY & MAINTENANCE

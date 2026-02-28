@@ -150,7 +150,7 @@ const Chat = () => {
             <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-[3rem] flex items-center justify-center mb-10 shadow-2xl shadow-blue-500/20">
               <span className="text-white text-5xl font-bold">C</span>
             </div>
-            <h2 className="text-3xl font-bold mb-4 tracking-tight">I am Carren.</h2>
+            <h2 className="text-3xl font-bold mb-4 tracking-tight">I am Carran.</h2>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
               Tell me your goal. I can browse, code, and execute tasks on your device autonomously.
             </p>
@@ -236,7 +236,7 @@ const Chat = () => {
                 }
               }}
               className="flex-1 bg-transparent text-white px-4 py-3 focus:outline-none placeholder:text-gray-600 resize-none max-h-32 text-lg font-medium"
-              placeholder={isUploading ? "Uploading payload..." : "Message Carren"}
+              placeholder={isUploading ? "Uploading payload..." : "Message Carran"}
               disabled={status || isUploading}
             />
 

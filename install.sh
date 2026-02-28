@@ -2,7 +2,7 @@
 
 set -e # Stop on error
 
-echo "Installing Carren AI Clone for Termux..."
+echo "Installing Carran AI Clone for Termux..."
 
 # Update packages
 pkg update -y && pkg upgrade -y
