@@ -1,4 +1,3 @@
-import pytest
 from backend.executor import CommandExecutor
 
 def test_parse_action():
