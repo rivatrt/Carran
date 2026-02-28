@@ -20,7 +20,7 @@ import secrets
 import threading
 import asyncio
 from contextlib import asynccontextmanager
-from typing import List, Dict, Optional
+from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException, Request, Depends, status, UploadFile, File
 from fastapi.staticfiles import StaticFiles
