@@ -48,11 +48,19 @@ class ChatMessage(BaseModel):
 CONFIG_FILE = "data/config.json"
 API_KEY_FILE = "data/api_key.txt"
 
+_cached_config = None
+_config_mtime = 0
+
 def load_config():
+    global _cached_config, _config_mtime
     if os.path.exists(CONFIG_FILE):
         try:
-            with open(CONFIG_FILE, "r") as f:
-                return json.load(f)
+            mtime = os.path.getmtime(CONFIG_FILE)
+            if _cached_config is None or mtime > _config_mtime:
+                with open(CONFIG_FILE, "r") as f:
+                    _cached_config = json.load(f)
+                _config_mtime = mtime
+            return _cached_config
         except Exception:
             pass
     return {
