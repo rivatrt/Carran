@@ -13,8 +13,8 @@ async function run() {
     const { action, url, selector, text, cookies, screenshotPath } = command;
 
     const browser = await puppeteer.launch({
-        executablePath: process.env.CHROME_PATH || 'chromium-browser',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        executablePath: process.env.CHROME_PATH || 'chromium',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer'],
         headless: "new"
     });
 
