@@ -1,7 +1,9 @@
 {
   "name": "carran-ai-backend",
   "version": "1.0.0",
-  "dependencies": {
-    "puppeteer-core": "^21.0.0"
-  }
+  "description": "Backend configuration, now fully transitioned to Python for Termux compatibility.",
+  "scripts": {
+    "test": "echo \"Tests are handled by Python pytest\""
+  },
+  "dependencies": {}
 }

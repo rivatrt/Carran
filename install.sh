@@ -7,8 +7,8 @@ echo "Installing Carran AI Clone for Termux..."
 # Update packages
 pkg update -y && pkg upgrade -y
 
-# Install dependencies
-pkg install -y python nodejs-lts git chromium
+# Install dependencies (Removed chromium per instructions)
+pkg install -y python nodejs git
 
 # Install Python requirements for search and web tools
 pkg install -y libxml2 libxslt # for lxml/beautifulsoup
@@ -25,10 +25,8 @@ pip install --upgrade pip
 # Install python packages
 echo "Installing Python dependencies (Fixed versions for Termux)..."
 pip install -r requirements.txt
-
-# Install Node.js dependencies for browser bridge
-echo "Installing Node.js dependencies for browser bridge..."
-npm install
+pip install playwright
+python -m playwright install chromium
 
 # Setup Frontend
 echo "Building Frontend..."
