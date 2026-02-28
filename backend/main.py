@@ -22,7 +22,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Dict, Optional
 
-from fastapi import FastAPI, HTTPException, Request, Depends, status, UploadFile, File
+from fastapi import FastAPI, HTTPException, Depends, status, UploadFile, File
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
