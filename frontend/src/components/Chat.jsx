@@ -159,30 +159,32 @@ const Chat = () => {
 
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
-            <div className={`max-w-[92%] lg:max-w-[80%] rounded-[2rem] px-6 py-4 ${
+            <div className={`max-w-[92%] lg:max-w-[80%] rounded-[1.8rem] px-5 py-3.5 ${
               m.role === 'user'
-                ? 'bg-[#0381fe] text-white shadow-lg rounded-tr-md'
+                ? 'bg-[#0381fe] text-white shadow-md rounded-tr-[0.4rem]'
                 : m.role === 'system'
-                ? 'bg-[#111] text-blue-400 font-mono text-xs border border-blue-900/20 rounded-tl-md'
-                : 'bg-[#1a1a1a] text-gray-200 border border-[#222] shadow-sm rounded-tl-md'
+                ? 'bg-[#0a0a0a] text-[#4ea1ff] font-mono text-[11px] border border-blue-500/10 rounded-tl-[0.4rem] tracking-tight'
+                : 'bg-[#1a1a1a] text-gray-100 border border-[#252525] shadow-sm rounded-tl-[0.4rem]'
             }`}>
               {m.role === 'system' && (
-                <div className="flex items-center space-x-2 mb-2 opacity-50 text-[9px] uppercase font-bold tracking-tighter">
-                   <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                   <span>System Observation</span>
+                <div className="flex items-center space-x-2 mb-1.5 opacity-60 text-[9px] uppercase font-black tracking-widest">
+                   <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse"></div>
+                   <span>System Log</span>
                 </div>
               )}
-              <pre className="whitespace-pre-wrap font-sans text-[16px] leading-relaxed overflow-x-auto">{m.content}</pre>
+              <p className="whitespace-pre-wrap font-sans text-[15px] leading-[1.6] overflow-x-auto selection:bg-blue-500/30">{m.content}</p>
             </div>
           </div>
         ))}
 
         {status && (
-          <div className="flex justify-start items-center space-x-2 px-2">
-            <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+          <div className="flex justify-start items-center space-x-3 px-1 animate-pulse">
+            <div className="flex space-x-1">
+              <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+              <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+              <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce"></div>
             </div>
-            <span className="text-sm text-gray-400">Using browser</span>
+            <span className="text-[11px] font-bold text-gray-600 uppercase tracking-widest">{currentStep || 'Neural Processing'}</span>
           </div>
         )}
 
@@ -206,29 +208,22 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="px-4 pb-8 pt-2 bg-black sticky bottom-0">
+      <div className="px-4 pb-10 pt-2 bg-black/95 backdrop-blur-md sticky bottom-0 border-t border-white/[0.03]">
         <div className="max-w-screen-md mx-auto">
-          <div className="relative flex items-center bg-[#1c1c1c] rounded-[2.5rem] px-2 py-2 transition-all shadow-2xl">
+          <div className="relative flex items-center bg-[#161616] border border-white/[0.05] rounded-[2.2rem] pl-1.5 pr-2 py-1.5 transition-all shadow-2xl focus-within:border-blue-500/30">
             <button
               onClick={() => fileInputRef.current.click()}
               disabled={status || isUploading}
-              className="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white disabled:opacity-30"
+              className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-white disabled:opacity-30 transition-colors"
+              title="Upload File"
             >
-              <div className="w-10 h-10 rounded-full bg-[#2a2a2a] flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <div className="w-9 h-9 rounded-full bg-[#222] flex items-center justify-center hover:bg-[#2a2a2a] transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                 </svg>
               </div>
             </button>
             <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
-
-            <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
-                <path d="M12 5v14M5 12h14" className="opacity-20" />
-                <path d="M4.5 16.5c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0" strokeWidth="1.5" />
-              </svg>
-            </button>
 
             <textarea
               rows="1"
@@ -240,14 +235,14 @@ const Chat = () => {
                   handleSend();
                 }
               }}
-              className="flex-1 bg-transparent text-white px-3 py-3 focus:outline-none placeholder:text-gray-600 resize-none max-h-32 text-lg"
-              placeholder={isUploading ? "Uploading..." : "Message Carren"}
+              className="flex-1 bg-transparent text-white px-4 py-3 focus:outline-none placeholder:text-gray-600 resize-none max-h-32 text-lg font-medium"
+              placeholder={isUploading ? "Uploading payload..." : "Message Carren"}
               disabled={status || isUploading}
             />
 
-            <div className="flex items-center space-x-1 pr-1">
-              <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-center space-x-2 pr-1">
+              <button className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                 </svg>
               </button>
@@ -255,14 +250,14 @@ const Chat = () => {
               <button
                 onClick={handleSend}
                 disabled={status || !input.trim() || isUploading}
-                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${status ? 'bg-transparent' : 'bg-white text-black hover:bg-gray-200'}`}
+                className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${status ? 'bg-transparent' : 'bg-white text-black hover:scale-105 active:scale-95 shadow-lg'}`}
               >
                 {status ? (
-                  <div className="w-10 h-10 bg-[#2a2a2a] rounded-lg flex items-center justify-center">
-                    <div className="w-4 h-4 bg-white rounded-sm"></div>
+                  <div className="w-9 h-9 bg-[#222] rounded-full flex items-center justify-center border border-white/10">
+                    <div className="w-3.5 h-3.5 bg-blue-500 rounded-full animate-pulse"></div>
                   </div>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
                   </svg>
                 )}
