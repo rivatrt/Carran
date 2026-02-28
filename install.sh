@@ -8,7 +8,7 @@ echo "Installing Carren AI Clone for Termux..."
 pkg update -y && pkg upgrade -y
 
 # Install dependencies
-pkg install -y python nodejs-lts git chromium rust binutils
+pkg install -y python nodejs-lts git chromium
 
 # Install Python requirements for search and web tools
 pkg install -y libxml2 libxslt # for lxml/beautifulsoup
