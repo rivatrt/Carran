@@ -10,3 +10,4 @@ __pycache__/
 server.log
 verification/
 .g4f/
+.coverage
