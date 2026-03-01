@@ -31,7 +31,7 @@ function App() {
             <div className="w-24 h-24 bg-gradient-to-br from-[#0381fe] to-[#0061c2] rounded-[2.8rem] flex items-center justify-center mb-8 shadow-[0_20px_40px_rgba(3,129,254,0.25)]">
               <span className="text-white text-5xl font-black">C</span>
             </div>
-            <h1 className="text-4xl font-black text-white tracking-tighter">Carren AI</h1>
+            <h1 className="text-4xl font-black text-white tracking-tighter">Carran AI</h1>
             <p className="text-gray-500 mt-4 text-sm font-bold uppercase tracking-[0.2em]">Neural Interface</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-10">
@@ -41,14 +41,14 @@ function App() {
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                className="w-full bg-[#151515] text-white border border-white/5 rounded-[2.2rem] px-8 py-5 focus:ring-2 focus:ring-[#0381fe] focus:bg-[#1a1a1a] outline-none transition-all placeholder:text-gray-800 text-xl font-medium"
+                className="w-full bg-[#151515] text-white border border-white/5 rounded-[2.2rem] px-8 py-5 focus:ring-2 focus:ring-[#3b82f6] focus:bg-[#1a1a1a] outline-none transition-all placeholder:text-gray-800 text-xl font-medium"
                 placeholder="••••••••••••"
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-[#0381fe] text-white font-black py-5 rounded-[2.2rem] hover:bg-[#0070e0] active:scale-[0.97] transition-all shadow-[0_15px_35px_rgba(3,129,254,0.3)] text-lg"
+              className="w-full bg-[#0381fe] text-white font-black py-5 rounded-[2.2rem] hover:bg-[#005bb5] active:scale-[0.97] transition-all shadow-[0_15px_35px_rgba(3,129,254,0.3)] text-lg"
             >
               Initialize Link
             </button>
@@ -76,7 +76,7 @@ function App() {
             </svg>
           </button>
           <div className="flex items-center space-x-2.5 cursor-pointer group">
-            <h1 className="text-[22px] font-black tracking-tighter">Carren <span className="text-[#0381fe] ml-1">1.6</span></h1>
+            <h1 className="text-[22px] font-black tracking-tighter">Carran <span className="text-[#0381fe] ml-1">1.6</span></h1>
             <div className="bg-white/5 px-2 py-0.5 rounded-md">
                 <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-blue-500 transition-colors">LITE</span>
             </div>

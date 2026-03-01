@@ -50,7 +50,7 @@ const Config = ({ onLogout }) => {
       <div className="max-w-3xl mx-auto space-y-8 pb-10">
         <header className="mb-10">
           <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
-          <p className="text-gray-500 mt-2">Customize your Carren AI experience</p>
+          <p className="text-gray-500 mt-2">Customize your Carran AI experience</p>
         </header>
 
         <section className="bg-[#121212] rounded-[2.5rem] p-8 border border-[#222222] shadow-xl">
