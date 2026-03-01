@@ -18,7 +18,17 @@ class BrowserTool:
         try:
             with sync_playwright() as p:
                 # MANDATORY Termux Android Kernel Stability Flags
+                # Point to native Termux chromium executable
+                import os
+
+                executable_path = os.environ.get("CHROME_PATH", "chromium-browser")
+
+                # Check common path for termux
+                if not os.path.exists(executable_path) and os.path.exists("/data/data/com.termux/files/usr/bin/chromium-browser"):
+                    executable_path = "/data/data/com.termux/files/usr/bin/chromium-browser"
+
                 browser = p.chromium.launch(
+                    executable_path=executable_path,
                     headless=True,
                     args=[
                         "--no-sandbox",
